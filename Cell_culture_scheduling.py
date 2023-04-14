@@ -3,7 +3,8 @@ import pandas as pd
 import datetime as dt 
 import matplotlib.pyplot as plt
 import numpy as np
-from streamlit_reports import st_reports
+import pdfkit
+from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
 
 
 
@@ -124,18 +125,29 @@ def plot_experiment_schedule(schedule):
     ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5))
     st.pyplot(figure)
 
-plot_experiment_schedule(schedule)
+schedule_plot = plot_experiment_schedule(schedule)
+st.write(schedule_plot)
 
 
-with open("dummy.pdf", "rb") as pdf_file:
-    PDFbyte = pdf_file.read()
-
-st.download_button(label="Export_Report",
-                    data=PDFbyte,
-                    file_name="test.pdf",
-                    mime='application/octet-stream')
-
-
-
+# PDF生成ボタン
+submit = form.form_submit_button("Generate PDF")
 # PDFを作成する
-st.button('Download Report', on_click=st_reports.download_report, args=[REPORT_NAME, {'key': 'value'}])
+if submit:
+    html = template.render(
+        EXPERIMENT_STEPS=EXPERIMENT_STEPS,
+        schedule=schedule,
+        schedule_plot=schedule_plot,
+       )
+
+    pdf = pdfkit.from_string(html, False)
+    st.balloons()
+
+    right.success("🎉 Your diploma was generated!")
+    # st.write(html, unsafe_allow_html=True)
+    # st.write("")
+    right.download_button(
+        "⬇️ Download PDF",
+        data=pdf,
+        file_name="diploma.pdf",
+        mime="application/octet-stream",
+    )
