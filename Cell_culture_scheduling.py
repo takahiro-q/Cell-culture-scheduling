@@ -135,6 +135,8 @@ with tab2:
         st.write(schedule_plot)
     
     with tab3:
+        
+        col3_1, col3_2, col3_3, col3_4, col3_5, col3_6 = st.columns(6)
 
         st.title("Cell Count Calculator")
 
@@ -157,36 +159,42 @@ with tab2:
         while True:
             # 実験を行った日付
             date = dt.date.today()
+            
+            with col3_1:
+                # 測定した細胞数の入力
+                measured_cells = st.number_input("Measured cell count (cell/mL)", key=f"measured{count_key}",
+                                                 min_value=0.0, value=1e+3, step=1e+3, format="%e")
+            with col3_2:
+                # 測定した細胞懸濁液のml(容量)の入力
+                suspension_volume = st.number_input("Cell suspension volume (mL)", min_value=0.0, value=1.0, step=0.5,
+                                                    key=f"volume{count_key}")
+            
+            with col3_3:
+                # 必要細胞量
+                required_cells = st.number_input("Required number of cells (cell/well) ",key=f"required{count_key}",
+                                                 min_value=0.0, value=1e+3, step=1e+3,  format="%e")
+            
+            with col3_4:
+                # 細胞の名前
+                cell_name = st.text_input("Cell name", key=f"name{count_key}")
+            
+            with col3_5:
+                # 細胞の継代数
+                passage = st.number_input("Passage number", key=f"passage{count_key}", min_value=0, step=1)
         
-            # 測定した細胞数の入力
-            measured_cells = st.number_input("Measured cell count (cell/mL)", key=f"measured{count_key}",
-                                             min_value=0.0, value=1e+3, step=1e+3, format="%e")
-        
-            # 測定した細胞懸濁液のml(容量)の入力
-            suspension_volume = st.number_input("Cell suspension volume (mL)", min_value=0.0, value=1.0, step=0.5,
-                                                key=f"volume{count_key}")
-        
+            with col3_6:
+                # 細胞の種類の選択
+                cell_type = st.selectbox("Select cell type", options=['iPS cells', 'Neural Progenitor Cells', 'Neurons'],key=f"type{count_key}")
+
             # トータルの細胞量の算出
             total_cells = measured_cells * suspension_volume
-        
-            # 必要細胞量
-            required_cells = st.number_input("Required number of cells (cell/well) ",key=f"required{count_key}",
-                                             min_value=0.0, value=1e+3, step=1e+3,  format="%e")
-            
-            # 細胞の名前
-            cell_name = st.text_input("Cell name", key=f"name{count_key}")
-            
-            # 細胞の継代数
-            passage = st.number_input("Passage number", key=f"passage{count_key}", min_value=0, step=1)
-        
+
             # 播種細胞数
             seeding_cells_volume = required_cells / measured_cells
+
         
-            # 細胞の種類の選択
-            cell_type = st.selectbox("Select cell type", options=['iPS cells', 'Neural Progenitor Cells', 'Neurons'],key=f"type{count_key}")
-        
-            # subtype
-            select_method = st.radio("What are the experimental methods used?", ("Passage", "Differentiation"), index=1, key=f"method{count_key}")
+            # method_type
+            select_method = st.radio("Please choose the method of your experiment", ("Passage", "Differentiation"), index=1, key=f"method{count_key}")
         
             # データフレームにデータを追加
             count_data = count_data.append({
