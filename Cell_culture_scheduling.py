@@ -204,7 +204,7 @@ with tab2:
             
             # 続けるかどうかの確認
             count_answer = st.radio("Do you want to continue?", ("Yes", "No"), index=1, key=f"Count_answer{count_key}")
-            if answer == 'No':
+            if count_answer == 'No':
                 break
         
             count_key += 1
