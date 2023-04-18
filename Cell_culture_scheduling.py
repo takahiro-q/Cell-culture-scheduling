@@ -136,8 +136,6 @@ with tab2:
     
     with tab3:
         
-        col3_1, col3_2, col3_3, col3_4, col3_5, col3_6 = st.columns(6)
-
         st.title("Cell Count Calculator")
 
         # データフレームの初期化
@@ -153,7 +151,8 @@ with tab2:
             "Total cell count",
             "Seeding cell count"])
         
-        
+        col3_1, col3_2, col3_3, col3_4, col3_5, col3_6 = st.columns(6)
+
         count_key = 1
         
         while True:
@@ -176,25 +175,27 @@ with tab2:
             
             with col3_4:
                 # 細胞の名前
-                cell_name = st.text_input("Cell name", key=f"name{count_key}")
+                cell_name = st.text_input("Cell name \n (Cell Strain name, etc.)", key=f"name{count_key}")
             
             with col3_5:
                 # 細胞の継代数
-                passage = st.number_input("Passage number", key=f"passage{count_key}", min_value=0, step=1)
+                passage = st.number_input("Passage number \n (p-number).", key=f"passage{count_key}", min_value=0, step=1)
         
             with col3_6:
                 # 細胞の種類の選択
-                cell_type = st.selectbox("Select cell type", options=['iPS cells', 'Neural Progenitor Cells', 'Neurons'],key=f"type{count_key}")
+                cell_type = st.selectbox("Select cell type \n (Select from tabs)", options=['iPS cells', 'Neural Progenitor Cells', 'Neurons'],key=f"type{count_key}")
 
             # トータルの細胞量の算出
             total_cells = measured_cells * suspension_volume
 
             # 播種細胞数
             seeding_cells_volume = required_cells / measured_cells
+            
+            col3_7, col3_8 = st.columns(2)
 
-        
-            # method_type
-            select_method = st.radio("Please choose the method of your experiment", ("Passage", "Differentiation"), index=1, key=f"method{count_key}")
+            with col3_7:
+                # method_type
+                select_method = st.radio("Please choose the method of your experiment", ("Passage", "Differentiation"), index=1, key=f"method{count_key}")
         
             # データフレームにデータを追加
             count_data = count_data.append({
@@ -210,12 +211,13 @@ with tab2:
                 "Seeding cell count": seeding_cells_volume},
                 ignore_index = True)
             
-            # 続けるかどうかの確認
-            count_answer = st.radio("Do you want to continue?", ("Yes", "No"), index=1, key=f"Count_answer{count_key}")
-            if count_answer == 'No':
-                break
-        
-            count_key += 1
+            with col3_8:
+                # 続けるかどうかの確認
+                count_answer = st.radio("Do you want to continue?", ("Yes", "No"), index=1, key=f"Count_answer{count_key}")
+                if count_answer == 'No':
+                    break
+            
+                count_key += 1
         
         # 最終的なデータフレームの表示
         st.write(count_data)
